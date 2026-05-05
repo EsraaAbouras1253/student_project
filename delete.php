@@ -1,15 +1,14 @@
 <?php
 require_once __DIR__ . "/Config/db.php";
-require_once "Helpers/headers.php";
-send_json_api_headers('DELETE');
+require_once __DIR__ . "/Helpers/headers.php";
+require_once __DIR__ . "/Helpers/response.php";
 
-// تضمين ملف الاتصال:
-require_once __DIR__ . "/Config/db.php";
-require_once "Helpers/response.php";
+send_json_api_headers('DELETE');
 
 // رفض أي طلب نوع اتصاله ليس DELETE
 if ($_SERVER["REQUEST_METHOD"] !== "DELETE") {
     response(405, "Only DELETE Method is allowed");
+    exit; // 
 }
 
 // استقبال البيانات من جسم الطلب من نوع json

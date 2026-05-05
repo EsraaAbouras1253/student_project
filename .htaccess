@@ -1,0 +1,15 @@
+RewriteEngine On
+
+# 1. Base URL: توجيه كل الطلبات التي تذهب إلى /students
+# POST للإضافة
+RewriteCond %{REQUEST_METHOD} POST
+RewriteRule ^students$ create.php [L]
+
+# PUT للتعديل
+RewriteCond %{REQUEST_METHOD} PUT
+RewriteRule ^students$ update.php [L]
+
+# DELETE للحذف
+RewriteCond %{REQUEST_METHOD} DELETE
+RewriteRule ^students$ delete.php [L]
+

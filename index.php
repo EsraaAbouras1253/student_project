@@ -1,19 +1,22 @@
 <?php
-
 require_once "Helpers/headers.php";
-send_json_api_headers('GET');
-
-// ملاحظة: تأكدي أن اسم ملف الاتصال عندك هو conn.php
-// إذا كنتِ تستخدمين ملف db.php كما في المرة السابقة، قومي بتغيير هذا السطر ليصبح: require_once "Config/db.php";
+send_json_api_headers('POST');
 require_once "Config/db.php"; 
 require_once "Helpers/response.php";
 
 // رفض أي طلب نوع اتصاله ليس GET
-if ($_SERVER["REQUEST_METHOD"] !== "GET") {
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     response(405, "Only GET Method is allowed");
 }
 
 try {
+    $email = $_POST['email']; // استلام الإيميل من الطلب
+$checkQuery = "SELECT id FROM students WHERE email = ?";
+$checkSql = $pdo->prepare($checkQuery);
+$checkSql->execute([$email]);
+if ($checkSql->fetch()) {
+    response(400, "هذا الإيميل موجود مسبقاً، يرجى استخدام إيميل آخر");
+}
     // تعديل الاستعلام ليناسب جدول الطلاب
     $query = "SELECT * FROM `students`"; 
     $sql = $pdo->prepare($query);

@@ -4,11 +4,11 @@ require_once __DIR__ . "/Helpers/headers.php";
 require_once __DIR__ . "/Config/db.php"; // تأكدي أن هذا هو اسم ملف الاتصال
 require_once __DIR__ . "/Helpers/response.php";
 
-send_json_api_headers('POST');
+send_json_api_headers('PUT');
 
 // رفض أي طلب نوع اتصاله ليس POST
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    response(405, "Only POST Method is allowed");
+if ($_SERVER["REQUEST_METHOD"] !== "PUT") {
+    response(405, "Only PUT Method is allowed");
 }
 
 // استقبال البيانات
@@ -37,6 +37,16 @@ try {
 
     if ($check->rowCount() === 0) {
         response(404, "Bad request: Student not found!");
+    }
+    $select_email_query = "SELECT `id` FROM `students` WHERE `email` = :email AND `id` != :id";
+    $check_email = $pdo->prepare($select_email_query);
+    $check_email->bindParam(":email", $email, PDO::PARAM_STR);
+    $check_email->bindParam(":id", $id, PDO::PARAM_INT);
+    $check_email->execute();
+
+    if ($check_email->rowCount() > 0) {
+        response(400, "خطأ: هذا الإيميل مستخدم مسبقاً من قبل طالب آخر");
+        exit; 
     }
 
     // تحديث البيانات في جدول students
